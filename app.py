@@ -75,6 +75,9 @@ def main() -> None:
     with baseline:
         st.subheader("Baseline melanoma subset")
         st.write("Cohort: melanoma + miraclib + PBMC + time_from_treatment_start = 0.")
+        st.markdown("**Qualifying baseline samples**")
+        st.caption(f"{len(data['baseline_samples']):,} biological samples")
+        st.dataframe(data["baseline_samples"], hide_index=True, use_container_width=True)
         columns = st.columns(3)
         for column, title, key in zip(columns, ["Samples by project", "Unique subjects by response", "Unique subjects by sex"],
                                       ["project_counts", "response_counts", "sex_counts"]):

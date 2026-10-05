@@ -64,8 +64,9 @@ the explicit `make pipeline` workflow. Do not commit the generated database.
   timepoint filters, and per-population counts and percentages.
 - **Response Analysis:** the exact cohort, sample counts, five-population boxplots,
   persisted tests, FDR significance, and repeated-measurement limitations.
-- **Baseline Subset Analysis:** project sample counts, distinct subjects by
-  response and sex, and the broader baseline male-responder B-cell mean.
+- **Baseline Subset Analysis:** the complete qualifying baseline sample table,
+  project sample counts, distinct subjects by response and sex, and the broader
+  baseline male-responder B-cell mean.
 
 Overview filters affect only the overview table, not the required analysis cohorts.
 

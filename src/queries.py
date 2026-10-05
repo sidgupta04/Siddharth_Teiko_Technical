@@ -38,6 +38,16 @@ def get_project_counts(connection: sqlite3.Connection) -> list[sqlite3.Row]:
     )
 
 
+def get_baseline_samples(connection: sqlite3.Connection) -> list[sqlite3.Row]:
+    """Return every qualifying baseline sample with the required metadata."""
+    return _read_rows(
+        connection,
+        BASELINE_COHORT + "SELECT sample, subject, project, response, sex, "
+        "time_from_treatment_start FROM baseline ORDER BY sample",
+        BASELINE_PARAMETERS,
+    )
+
+
 def get_response_subject_counts(connection: sqlite3.Connection) -> list[sqlite3.Row]:
     """Count distinct responders/non-responders, excluding NULL/other responses."""
     return _read_rows(

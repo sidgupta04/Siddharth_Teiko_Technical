@@ -26,6 +26,10 @@ def test_dashboard_assembly_reuses_required_results(dashboard_database):
     assert set(data["overview"]["sample"]) == {f"S{i}" for i in range(1, 8)}
     assert len(data["responders"]) == 20
     assert set(data["responders"]["sample"]) == {"S1", "S2", "S5", "S7"}
+    assert len(data["baseline_samples"]) == 3
+    assert list(data["baseline_samples"].columns) == [
+        "sample", "subject", "project", "response", "sex", "time_from_treatment_start",
+    ]
     assert data["statistics"]["responder_n"].tolist() == [3] * 5
     assert data["statistics"]["non_responder_n"].tolist() == [1] * 5
     assert data["project_counts"].to_dict("records") == [

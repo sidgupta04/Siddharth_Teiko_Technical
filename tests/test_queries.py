@@ -5,6 +5,7 @@ import pytest
 
 from src.database import load_data
 from src.queries import (
+    get_baseline_samples,
     format_bcell_average,
     get_bcell_average,
     get_project_counts,
@@ -43,6 +44,20 @@ def test_samples_by_project(subset_database):
             {"project": "p1", "sample_count": 3},
             {"project": "p2", "sample_count": 1},
         ]
+
+
+def test_baseline_samples_returns_all_qualifying_rows(subset_database):
+    with closing(sqlite3.connect(subset_database)) as c:
+        rows = get_baseline_samples(c)
+    assert [row.keys() for row in rows] == [[
+        "sample", "subject", "project", "response", "sex", "time_from_treatment_start",
+    ]] * 4
+    assert [dict(row) for row in rows] == [
+        {"sample": "A", "subject": "a", "project": "p1", "response": "yes", "sex": "M", "time_from_treatment_start": 0},
+        {"sample": "B", "subject": "a", "project": "p1", "response": "yes", "sex": "M", "time_from_treatment_start": 0},
+        {"sample": "C", "subject": "b", "project": "p1", "response": "no", "sex": "F", "time_from_treatment_start": 0},
+        {"sample": "D", "subject": "c", "project": "p2", "response": "yes", "sex": "M", "time_from_treatment_start": 0},
+    ]
 
 
 def test_distinct_subjects_by_response(subset_database):

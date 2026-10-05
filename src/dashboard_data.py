@@ -8,7 +8,7 @@ import pandas as pd
 
 from src.frequencies import get_frequency_data
 from src.queries import (
-    get_bcell_average, get_project_counts, get_response_subject_counts,
+    get_baseline_samples, get_bcell_average, get_project_counts, get_response_subject_counts,
     get_sex_subject_counts,
 )
 from src.statistics import get_responder_data
@@ -58,6 +58,10 @@ def load_dashboard_data(database_path: Path) -> dict:
                 "overview": overview,
                 "responders": responders,
                 "statistics": get_statistics(connection),
+                "baseline_samples": pd.DataFrame(
+                    [dict(r) for r in get_baseline_samples(connection)],
+                    columns=["sample", "subject", "project", "response", "sex", "time_from_treatment_start"],
+                ),
                 "project_counts": pd.DataFrame([dict(r) for r in get_project_counts(connection)], columns=["project", "sample_count"]),
                 "response_counts": pd.DataFrame([dict(r) for r in get_response_subject_counts(connection)], columns=["response", "subject_count"]),
                 "sex_counts": pd.DataFrame([dict(r) for r in get_sex_subject_counts(connection)], columns=["sex", "subject_count"]),
