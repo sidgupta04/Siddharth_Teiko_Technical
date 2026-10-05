@@ -34,7 +34,11 @@ previous database only after success. Analysis transactionally writes five rows 
 The original CSV is never modified. If analysis fails, fix the reported input
 issue and rerun the pipeline; do not use incomplete results.
 
-## Run the dashboard
+## Dashboard
+
+Live dashboard: https://siddharth-teiko-technical.streamlit.app/
+
+## Run the dashboard locally
 
 ```bash
 make dashboard
@@ -42,8 +46,7 @@ make dashboard
 
 Open [the local dashboard](http://localhost:8501). In GitHub Codespaces, open the
 **Ports** panel, find forwarded port **8501**, and choose **Open in Browser**. If
-necessary, use **Forward a Port** to add 8501. The Codespaces-generated URL is the
-dashboard link for that running Codespace; no public deployment is provided.
+necessary, use **Forward a Port** to add 8501.
 Keep the terminal running, and stop the server with Ctrl+C.
 
 The dashboard reads SQLite in read-only mode. Missing or incomplete databases
