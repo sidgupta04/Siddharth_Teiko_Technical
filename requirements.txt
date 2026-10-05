@@ -1,2 +1,4 @@
-# Milestone 1 runtime uses only the Python standard library.
+# Loading and frequency queries use the standard library; analysis uses SciPy/statsmodels.
+scipy==1.15.2
+statsmodels==0.14.4
 pytest==8.3.5
