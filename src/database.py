@@ -29,6 +29,19 @@ CREATE TABLE cell_counts (
     count INTEGER NOT NULL CHECK (typeof(count) = 'integer' AND count >= 0),
     PRIMARY KEY (sample, population)
 );
+CREATE VIEW cell_frequencies AS
+SELECT
+    counts.sample,
+    totals.total_count,
+    counts.population,
+    counts.count,
+    100.0 * counts.count / NULLIF(totals.total_count, 0) AS percentage
+FROM cell_counts AS counts
+JOIN (
+    SELECT sample, SUM(count) AS total_count
+    FROM cell_counts
+    GROUP BY sample
+) AS totals ON totals.sample = counts.sample;
 """
 
 

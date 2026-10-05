@@ -29,7 +29,10 @@ def test_load_schema_values_and_normalization(tmp_path, write_csv):
         objects = connection.execute(
             "SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view')"
         ).fetchall()
-        assert set(objects) == {("samples", "table"), ("cell_counts", "table")}
+        assert set(objects) == {
+            ("samples", "table"), ("cell_counts", "table"),
+            ("cell_frequencies", "view"),
+        }
         columns = {r[1] for r in connection.execute("PRAGMA table_info(samples)")}
         assert columns == {
             "project", "subject", "condition", "age", "sex", "treatment",
