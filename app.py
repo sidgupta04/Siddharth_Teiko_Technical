@@ -6,6 +6,7 @@ import plotly.express as px
 import streamlit as st
 
 from src.dashboard_data import filter_frequency_data, load_dashboard_data
+from src.deployment import bootstrap_database, is_streamlit_cloud
 from src.queries import format_bcell_average
 from src.validation import POPULATIONS
 
@@ -14,8 +15,12 @@ def main() -> None:
     st.set_page_config(page_title="Teiko · Immune-cell analysis", page_icon="🧬", layout="wide")
     st.title("Immune-cell clinical trial analysis")
     st.caption("Loblaw Bio · Explore sample composition, response associations, and baseline subsets")
+    root = Path(__file__).resolve().parent
+    database = root / "clinical_trial.db"
     try:
-        data = load_dashboard_data(Path(__file__).resolve().parent / "clinical_trial.db")
+        if not database.exists() and is_streamlit_cloud():
+            bootstrap_database(database, root / "cell-count.csv")
+        data = load_dashboard_data(database)
     except (FileNotFoundError, ValueError) as error:
         st.error(str(error))
         st.stop()

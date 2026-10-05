@@ -51,6 +51,12 @@ display an instruction to run `make pipeline`; the UI never rebuilds data or
 recalculates statistics. After rerunning the pipeline, refresh the page to read
 the new results.
 
+On Streamlit Community Cloud, the first app run automatically builds the ignored
+`clinical_trial.db` from the committed `cell-count.csv` and runs the same analysis
+pipeline when the database is absent. This deployment-only bootstrap is guarded
+by Streamlit Cloud runtime markers; local `streamlit run app.py` behavior remains
+the explicit `make pipeline` workflow. Do not commit the generated database.
+
 - **Data Overview:** total samples, literal sample-ID search, condition/treatment/
   timepoint filters, and per-population counts and percentages.
 - **Response Analysis:** the exact cohort, sample counts, five-population boxplots,

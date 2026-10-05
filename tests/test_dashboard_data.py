@@ -6,6 +6,7 @@ import pytest
 
 from src.dashboard_data import filter_frequency_data, get_statistics, load_dashboard_data
 from src.database import load_data
+from src.deployment import bootstrap_database, is_streamlit_cloud
 from src.statistics import run_analysis
 
 
@@ -97,3 +98,42 @@ def test_corrupt_database_is_explained(tmp_path):
     path.write_text("not sqlite")
     with pytest.raises(ValueError, match="make pipeline"):
         load_dashboard_data(path)
+
+
+def test_local_environment_does_not_enable_cloud_bootstrap():
+    assert is_streamlit_cloud({}) is False
+    assert is_streamlit_cloud({"STREAMLIT_CLOUD": "0", "USER": "developer"}) is False
+
+
+@pytest.mark.parametrize("key", ["STREAMLIT_CLOUD", "IS_STREAMLIT_CLOUD", "STREAMLIT_SHARING_MODE"])
+def test_explicit_cloud_markers_enable_bootstrap(key):
+    assert is_streamlit_cloud({key: "true"}) is True
+
+
+def test_streamlit_runtime_cloud_marker_enables_bootstrap():
+    assert is_streamlit_cloud({"STREAMLIT_RUNTIME_ENV": "cloud"}) is True
+    assert is_streamlit_cloud({"STREAMLIT_RUNTIME_ENV": "local"}) is False
+
+
+def test_known_cloud_runtime_marker_enables_bootstrap():
+    assert is_streamlit_cloud({"USER": "appuser"}) is True
+
+
+def test_cloud_bootstrap_builds_complete_database(tmp_path, write_csv, pipeline_rows):
+    database = tmp_path / "clinical_trial.db"
+    csv_path = write_csv(rows=pipeline_rows)
+    assert bootstrap_database(database, csv_path) is True
+    assert database.exists()
+    data = load_dashboard_data(database)
+    assert data["total_samples"] == 7
+    assert len(data["statistics"]) == 5
+    assert bootstrap_database(database, csv_path) is False
+
+
+def test_cloud_bootstrap_does_not_replace_existing_database(tmp_path, write_csv, pipeline_rows):
+    database = tmp_path / "clinical_trial.db"
+    csv_path = write_csv(rows=pipeline_rows)
+    database.write_bytes(b"existing")
+    before = database.read_bytes()
+    assert bootstrap_database(database, csv_path) is False
+    assert database.read_bytes() == before
