@@ -31,3 +31,19 @@ def write_csv(tmp_path, sample_rows):
             writer.writerows(rows)
         return path
     return write
+
+
+@pytest.fixture
+def pipeline_rows(sample_rows):
+    """Small end-to-end cohort with exclusions and repeated baseline subjects."""
+    base = {**sample_rows[0], "project": "p1"}
+    changes = [
+        {"sample": "S1", "b_cell": "10"},
+        {"sample": "S2", "subject": "subject_2", "response": "no", "sex": "F", "b_cell": "20"},
+        {"sample": "S3", "subject": "subject_3", "treatment": "other", "b_cell": "30"},
+        {"sample": "S4", "subject": "subject_4", "sample_type": "WB", "b_cell": "40"},
+        {"sample": "S5", "time_from_treatment_start": "7", "b_cell": "50"},
+        {"sample": "S6", "subject": "subject_6", "condition": "carcinoma", "b_cell": "60"},
+        {"sample": "S7", "project": "p2", "b_cell": "70"},
+    ]
+    return [{**base, **change} for change in changes]
